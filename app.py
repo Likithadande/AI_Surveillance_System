@@ -1,20 +1,28 @@
 import cv2
+from ultralytics import YOLO
 
+# Load YOLO model
+model = YOLO("yolov8n.pt")
+
+# Open webcam
 cap = cv2.VideoCapture(0)
-
-if not cap.isOpened():
-    print("Cannot access webcam")
-    exit()
 
 while True:
     ret, frame = cap.read()
 
     if not ret:
-        print("Failed to grab frame")
         break
 
-    cv2.imshow("AI Surveillance System", frame)
+    # Run YOLO detection
+    results = model(frame)
 
+    # Draw detections
+    annotated_frame = results[0].plot()
+
+    # Show frame
+    cv2.imshow("AI Surveillance System", annotated_frame)
+
+    # Press q to exit
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
